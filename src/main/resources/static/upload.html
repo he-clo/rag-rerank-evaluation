@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>文档解析上传</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+<h2>📄 文档解析</h2>
+<form id="uploadForm" enctype="multipart/form-data">
+    <div>
+        <input type="file" name="file" id="file" required />
+    </div>
+    <div>
+        <button type="submit">上传并解析</button>
+    </div>
+</form>
+<h3>解析结果：</h3>
+<pre id="result">等待上传...</pre>
+
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const fileInput = document.getElementById('file');
+        const resultEl = document.getElementById('result');
+
+        if (!fileInput.files.length) {
+            resultEl.textContent = '请选择文件';
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        resultEl.textContent = '解析中...';
+
+        try {
+            const response = await fetch('/test01/input', {
+                method: 'POST',
+                body: formData
+            });
+
+            const rawText = await response.text();
+
+            if (!response.ok) {
+                resultEl.textContent = '错误：' + rawText;
+                return;
+            }
+
+            console.log('raw:', rawText);
+
+            try {
+                const data = JSON.parse(rawText);
+                console.log('data:', data);
+
+                // 如果想直接看 plain 文本：
+                // resultEl.textContent = data.plain || JSON.stringify(data, null, 2);
+
+                resultEl.textContent = JSON.stringify(data, null, 2);
+            } catch {
+                resultEl.textContent = rawText;
+            }
+
+        } catch (err) {
+            resultEl.textContent = '请求失败：' + err.message;
+        }
+    });
+</script>
+</body>
+</html>

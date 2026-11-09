@@ -1,0 +1,39 @@
+spring:
+  ai:
+    openai:
+      api-key: sk-adf4a74c71e543acbaf6bcef9b877c7e
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-flash
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ai_test
+    username: postgres
+    password: "123456"
+    driver-class-name: org.postgresql.Driver
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 300MB
+      max-request-size: 300MB
+
+server:
+  tomcat:
+    max-http-form-post-size: 300MB
+    max-swallow-size: 300MB
+
+embedding:
+  batch-size: 240
+  overflow: 36
+
+ollama:
+  batch-size: 32
+  base-url: http://192.168.0.101:11434
+  model:
+    embed: bge-m3:latest
+    reranker: hans-tech/bge-reranker-v2-m3:260522
+  timeout-ms: 300
+
+Variable: 0.3
